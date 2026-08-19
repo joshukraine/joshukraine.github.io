@@ -73,6 +73,32 @@
         vertical-align: middle;
       }
     </style>
+
+    <script>
+      // The ceremony happens at one absolute instant, so anchor the copy swap
+      // to a fixed timestamp (CDT = UTC-05:00) rather than the viewer's local
+      // calendar date -- otherwise guests in Ukraine, nine hours ahead, would
+      // flip to past-tense copy while the service was still under way.
+      // Set well past the 2:00 PM start so a late or long ceremony never reads
+      // "watch the recording" while it is in progress.
+      var CEREMONY_ENDS = Date.parse("2026-08-22T17:00:00-05:00");
+
+      if (Date.now() >= CEREMONY_ENDS) {
+        document.documentElement.classList.add("post-ceremony");
+        document.title = "Abbie & Axel · August 22, 2026";
+      }
+    </script>
+
+    <style>
+      /* Deliberately a plain <style>, not the Tailwind block above: this has to
+         apply on first paint, before the CDN build compiles, so nobody ever
+         sees a flash of the wrong copy. Without JS the class is never added and
+         the pre-ceremony copy shows, which is the safe default. */
+      .post-ceremony [data-phase="live"],
+      html:not(.post-ceremony) [data-phase="recorded"] {
+        display: none;
+      }
+    </style>
   </head>
   <body class="min-h-screen flex items-center justify-center px-6 py-12 sm:py-16">
     <main class="w-full max-w-3xl text-center">
@@ -116,17 +142,27 @@
       </p>
 
       <p
-        class="text-xs sm:text-sm text-[color:var(--color-ink-quiet)] tracking-[0.25em] uppercase leading-relaxed mb-10 sm:mb-12"
+        data-phase="live"
+        class="text-xs sm:text-sm text-[color:var(--color-ink-quiet)] tracking-[0.25em] uppercase leading-relaxed"
       >
         <span class="whitespace-nowrap">Ceremony 2:00 PM CDT ·</span>
         <span class="whitespace-nowrap">Stream opens 1:45</span>
       </p>
 
       <p
-        class="mx-auto max-w-md text-base sm:text-lg leading-relaxed text-[color:var(--color-ink-soft)]"
+        data-phase="live"
+        class="mx-auto mt-10 sm:mt-12 max-w-md text-base sm:text-lg leading-relaxed text-[color:var(--color-ink-soft)]"
       >
         Wherever you are, we would love for you to celebrate with us — join us
         live as Abbie and Axel are married.
+      </p>
+
+      <p
+        data-phase="recorded"
+        class="mx-auto mt-10 sm:mt-12 max-w-md text-base sm:text-lg leading-relaxed text-[color:var(--color-ink-soft)]"
+      >
+        Thank you for celebrating with us. The full ceremony is above, to watch
+        or revisit whenever you like.
       </p>
 
       <p
