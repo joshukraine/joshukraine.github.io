@@ -232,6 +232,42 @@
           translate: none;
         }
       }
+      /* Slide between photos (View Transitions). The outgoing and incoming
+         photos get separate transition names (set in the script), so each
+         slides on its own instead of morphing between portrait and landscape
+         sizes. With reduced motion these rules never apply and the browser's
+         default crossfade runs instead. */
+      @media (prefers-reduced-motion: no-preference) {
+        html:active-view-transition-type(forward) {
+          &::view-transition-old(lb-old) {
+            animation: lb-slide-out-left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+          }
+          &::view-transition-new(lb-new) {
+            animation: lb-slide-in-right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+          }
+        }
+        html:active-view-transition-type(backward) {
+          &::view-transition-old(lb-old) {
+            animation: lb-slide-out-right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+          }
+          &::view-transition-new(lb-new) {
+            animation: lb-slide-in-left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+          }
+        }
+      }
+      @keyframes lb-slide-out-left {
+        to { translate: -100vw 0; }
+      }
+      @keyframes lb-slide-in-right {
+        from { translate: 100vw 0; }
+      }
+      @keyframes lb-slide-out-right {
+        to { translate: 100vw 0; }
+      }
+      @keyframes lb-slide-in-left {
+        from { translate: -100vw 0; }
+      }
+
       .lb-count {
         position: absolute;
         bottom: 1.1rem;
@@ -552,7 +588,15 @@
           return img;
         }
 
-        async function show(i) {
+        // Directional slides need View Transitions *with* transition types;
+        // without both, photos swap instantly as before.
+        const canSlide =
+          typeof document.startViewTransition === "function" &&
+          "ViewTransition" in window &&
+          "types" in ViewTransition.prototype;
+
+        // dir: 1 = next, -1 = previous, 0 = no slide (opening the lightbox).
+        async function show(i, dir = 0) {
           index = (i + links.length) % links.length;
           const current = index;
           const img = buildImage(current);
@@ -564,7 +608,17 @@
             // Decode can reject for reasons that still let the image render.
           }
           if (current !== index) return; // a newer navigation won the race
-          stage.replaceChildren(img);
+          const previous = stage.querySelector("img");
+          if (dir && previous && canSlide) {
+            previous.style.viewTransitionName = "lb-old";
+            img.style.viewTransitionName = "lb-new";
+            document.startViewTransition({
+              update: () => stage.replaceChildren(img),
+              types: [dir > 0 ? "forward" : "backward"],
+            });
+          } else {
+            stage.replaceChildren(img);
+          }
           // Warm the neighbours so prev/next feel instant.
           buildImage((current + 1) % links.length);
           buildImage((current - 1 + links.length) % links.length);
@@ -580,12 +634,12 @@
           });
         });
 
-        dialog.querySelector(".lb-prev").addEventListener("click", () => show(index - 1));
-        dialog.querySelector(".lb-next").addEventListener("click", () => show(index + 1));
+        dialog.querySelector(".lb-prev").addEventListener("click", () => show(index - 1, -1));
+        dialog.querySelector(".lb-next").addEventListener("click", () => show(index + 1, 1));
 
         dialog.addEventListener("keydown", (event) => {
-          if (event.key === "ArrowLeft") show(index - 1);
-          else if (event.key === "ArrowRight") show(index + 1);
+          if (event.key === "ArrowLeft") show(index - 1, -1);
+          else if (event.key === "ArrowRight") show(index + 1, 1);
         });
 
         // Empty the stage on close so reopening on another photo never flashes
@@ -619,7 +673,8 @@
           startX = startY = null;
           if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
             lastSwipe = performance.now();
-            show(index + (dx < 0 ? 1 : -1));
+            const dir = dx < 0 ? 1 : -1;
+            show(index + dir, dir);
           }
         });
         stage.addEventListener("pointercancel", () => {
