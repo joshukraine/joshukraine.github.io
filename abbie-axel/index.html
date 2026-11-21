@@ -3,44 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Abbie &amp; Axel · Live August 22, 2026</title>
+    <title>Abbie &amp; Axel · August 22, 2026</title>
     <meta
       name="description"
-      content="Abbie & Axel are getting married on August 22, 2026. Watch the ceremony live — the stream opens at 1:45 PM CDT."
+      content="Abbie & Axel were married on August 22, 2026. Watch the ceremony and browse photos from the day."
     />
 
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="icon" href="data:," />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Abbie & Axel · Live August 22, 2026" />
+    <meta property="og:title" content="Abbie & Axel · August 22, 2026" />
     <meta
       property="og:description"
-      content="Watch the ceremony live — Saturday, August 22, 2026 at 2:00 PM CDT."
+      content="Abbie & Axel were married on August 22, 2026. Watch the ceremony and browse photos from the day."
     />
     <meta
       property="og:image"
-      content="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_1200,h_630,c_fill,g_auto/v1779808026/Misc/abbie-axel_zrnm3s"
+      content="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_1200,h_630,c_fill,g_auto/abbie-axel/ALV-43_pqscrz"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Abbie and Axel cheek to cheek in the garden, holding hands"
+    />
     <meta property="og:url" content="https://joshukraine.com/abbie-axel/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Abbie & Axel · Live August 22, 2026" />
+    <meta name="twitter:title" content="Abbie & Axel · August 22, 2026" />
     <meta
       name="twitter:description"
-      content="Watch the ceremony live — Saturday, August 22, 2026 at 2:00 PM CDT."
+      content="Abbie & Axel were married on August 22, 2026. Watch the ceremony and browse photos from the day."
     />
     <meta
       name="twitter:image"
-      content="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_1200,h_630,c_fill,g_auto/v1779808026/Misc/abbie-axel_zrnm3s"
+      content="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_1200,h_630,c_fill,g_auto/abbie-axel/ALV-43_pqscrz"
     />
 
     <link
@@ -74,99 +79,417 @@
       }
     </style>
 
-    <script>
-      // The ceremony happens at one absolute instant, so anchor the copy swap
-      // to a fixed timestamp (CDT = UTC-05:00) rather than the viewer's local
-      // calendar date -- otherwise guests in Ukraine, nine hours ahead, would
-      // flip to past-tense copy while the service was still under way.
-      // Set well past the 2:00 PM start so a late or long ceremony never reads
-      // "watch the recording" while it is in progress.
-      var CEREMONY_ENDS = Date.parse("2026-08-22T17:00:00-05:00");
-
-      if (Date.now() >= CEREMONY_ENDS) {
-        document.documentElement.classList.add("post-ceremony");
-        document.title = "Abbie & Axel · August 22, 2026";
-      }
-    </script>
-
     <style>
-      /* Deliberately a plain <style>, not the Tailwind block above: this has to
-         apply on first paint, before the CDN build compiles, so nobody ever
-         sees a flash of the wrong copy. Without JS the class is never added and
-         the pre-ceremony copy shows, which is the safe default. */
-      .post-ceremony [data-phase="live"],
-      html:not(.post-ceremony) [data-phase="recorded"] {
-        display: none;
+      /* Gallery and lightbox styles live in a plain <style> so they apply on
+         first paint, before the Tailwind CDN build compiles. */
+
+      .gallery a {
+        display: block;
+        overflow: hidden;
+        border-radius: 0.375rem;
+        background-color: rgb(0 0 0 / 0.05);
+      }
+      .gallery a:focus-visible {
+        outline: 2px solid #2a2a2a;
+        outline-offset: 3px;
+      }
+      .gallery img {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+        object-fit: cover;
+      }
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+        .gallery img {
+          transition: transform 0.4s ease;
+        }
+        .gallery a:hover img {
+          transform: scale(1.03);
+        }
+      }
+
+      /* Lightbox: a full-viewport modal <dialog>. The browser supplies the
+         inert page, focus containment, Esc/back-gesture dismissal, and focus
+         return to the thumbnail that opened it. */
+      #lightbox {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        max-height: none;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background-color: #0e0e0e;
+        color: #fff;
+      }
+      /* Scoped to [open]: setting display on dialog unconditionally would
+         override the closed state and leave it visible. */
+      #lightbox[open] {
+        display: grid;
+        grid-template-rows: 1fr;
+      }
+      /* Stop scroll gestures over or inside the dialog from scrolling the page
+         behind it -- without touching overflow on html/body. */
+      #lightbox:modal {
+        overscroll-behavior: contain;
+      }
+      #lightbox::backdrop {
+        background: transparent;
+        overflow: hidden;
+        overscroll-behavior: contain;
+      }
+      /* Entry fade only. An exit fade needs `overlay` and discrete `display`
+         transitions, which Safari and Firefox lack, plus a JS close fallback;
+         an instant close is not worth that code. */
+      #lightbox[open] {
+        opacity: 1;
+        transition: opacity 0.2s ease-out;
+        @starting-style {
+          opacity: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #lightbox[open] {
+          transition-duration: 0.1s;
+        }
+      }
+
+      .lb-stage {
+        display: grid;
+        place-items: center;
+        min-height: 0;
+        padding: 3.5rem 0.75rem;
+        /* Vertical pans and pinch-zoom stay native; horizontal swipes reach
+           the pointer handlers for prev/next. */
+        touch-action: pan-y pinch-zoom;
+      }
+      .lb-stage img {
+        /* Explicit viewport math: a percentage max-height does not resolve
+           against an auto-height grid row. 7rem/8rem = the stage padding. */
+        max-width: 100%;
+        max-height: calc(100dvh - 7rem);
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+      @media (min-width: 640px) {
+        .lb-stage {
+          padding: 4rem 5rem;
+        }
+        .lb-stage img {
+          max-height: calc(100dvh - 8rem);
+        }
+      }
+
+      .lb-button {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 9999px;
+        background-color: rgb(255 255 255 / 0.08);
+        color: #fff;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      .lb-button:hover {
+        background-color: rgb(255 255 255 / 0.18);
+      }
+      .lb-button:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+      }
+      .lb-button svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+      .lb-close {
+        top: 0.75rem;
+        right: 0.75rem;
+      }
+      .lb-prev,
+      .lb-next {
+        top: 50%;
+        translate: 0 -50%;
+      }
+      .lb-prev {
+        left: 0.75rem;
+      }
+      .lb-next {
+        right: 0.75rem;
+      }
+      /* On narrow screens the arrows move to the bottom bar so they never
+         cover the photo; swiping is the primary gesture there. */
+      @media (max-width: 639px) {
+        .lb-prev,
+        .lb-next {
+          top: auto;
+          bottom: 0.5rem;
+          translate: none;
+        }
+      }
+      .lb-count {
+        position: absolute;
+        bottom: 1.1rem;
+        left: 50%;
+        translate: -50% 0;
+        font-size: 0.75rem;
+        letter-spacing: 0.25em;
+        color: rgb(255 255 255 / 0.7);
       }
     </style>
   </head>
-  <body class="min-h-screen flex items-center justify-center px-6 py-12 sm:py-16">
-    <main class="w-full max-w-3xl text-center">
-      <div class="aspect-video w-full overflow-hidden rounded-xl bg-black/5">
-        <iframe
-          class="h-full w-full"
-          src="https://www.youtube-nocookie.com/embed/pRWotYdN4jw"
-          title="Live stream: The Wedding of Abigail &amp; Axel"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-      </div>
+  <body class="px-6 py-14 sm:py-20">
+    <main class="mx-auto w-full max-w-5xl">
+      <header class="text-center">
+        <!-- The cover photo is the page's largest above-the-fold image (its
+             LCP), so it loads eagerly at high priority. It is a copy of the
+             first gallery photo, kept in the grid as well. -->
+        <img
+          src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_1600,c_limit/abbie-axel/ALV-43_pqscrz"
+          srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_800,c_limit/abbie-axel/ALV-43_pqscrz 800w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_1200,c_limit/abbie-axel/ALV-43_pqscrz 1200w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_1600,c_limit/abbie-axel/ALV-43_pqscrz 1600w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2000,c_limit/abbie-axel/ALV-43_pqscrz 2000w"
+          sizes="(min-width: 816px) 768px, calc(100vw - 48px)"
+          width="1600"
+          height="1067"
+          fetchpriority="high"
+          alt="Abbie and Axel cheek to cheek in the garden, holding hands"
+          class="mx-auto mb-10 sm:mb-14 w-full max-w-3xl h-auto rounded-xl"
+        />
 
-      <p
-        class="mt-4 mb-10 sm:mb-12 text-xs sm:text-sm text-[color:var(--color-ink-quiet)]"
-      >
-        Trouble viewing?
-        <a
-          href="https://www.youtube.com/live/pRWotYdN4jw"
-          target="_blank"
-          rel="noopener"
-          class="border-b border-current pb-0.5 hover:text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)] transition-colors"
+        <h1
+          class="font-display text-6xl sm:text-7xl md:text-8xl font-normal leading-none tracking-wide mb-6"
         >
-          Watch on YouTube
-        </a>
-      </p>
+          Abbie <span class="italic">&amp;</span> Axel
+        </h1>
 
-      <h1
-        class="font-display text-6xl sm:text-7xl md:text-8xl font-normal leading-none tracking-wide mb-6"
-      >
-        Abbie <span class="italic">&amp;</span> Axel
-      </h1>
+        <p
+          class="text-sm sm:text-base text-[color:var(--color-ink-soft)] tracking-[0.35em] uppercase flex items-center justify-center gap-4"
+        >
+          <span class="divider-rule" aria-hidden="true"></span>
+          <span>August 22, 2026</span>
+          <span class="divider-rule" aria-hidden="true"></span>
+        </p>
 
-      <p
-        class="text-sm sm:text-base text-[color:var(--color-ink-soft)] tracking-[0.35em] uppercase mb-4 flex items-center justify-center gap-4"
-      >
-        <span class="divider-rule" aria-hidden="true"></span>
-        <span>August 22, 2026</span>
-        <span class="divider-rule" aria-hidden="true"></span>
-      </p>
+        <p
+          class="mx-auto mt-8 sm:mt-10 max-w-md text-base sm:text-lg leading-relaxed text-[color:var(--color-ink-soft)]"
+        >
+          Thank you for celebrating with us. Here is the full ceremony and a few
+          favorite moments from the day, to revisit whenever you like.
+        </p>
+      </header>
 
-      <p
-        data-phase="live"
-        class="text-xs sm:text-sm text-[color:var(--color-ink-quiet)] tracking-[0.25em] uppercase leading-relaxed"
-      >
-        <span class="whitespace-nowrap">Ceremony 2:00 PM CDT ·</span>
-        <span class="whitespace-nowrap">Stream opens 1:45</span>
-      </p>
+      <section class="mx-auto mt-14 sm:mt-20 max-w-3xl" aria-labelledby="ceremony-heading">
+        <h2
+          id="ceremony-heading"
+          class="mb-6 text-center text-xs sm:text-sm text-[color:var(--color-ink-soft)] tracking-[0.25em] uppercase"
+        >
+          The Ceremony
+        </h2>
+        <div class="aspect-video w-full overflow-hidden rounded-xl bg-black/5">
+          <iframe
+            class="h-full w-full"
+            src="https://www.youtube-nocookie.com/embed/pRWotYdN4jw"
+            title="Recording: The Wedding of Abigail &amp; Axel"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <p class="mt-4 text-center text-xs sm:text-sm text-[color:var(--color-ink-quiet)]">
+          Trouble viewing?
+          <a
+            href="https://www.youtube.com/live/pRWotYdN4jw"
+            target="_blank"
+            rel="noopener"
+            class="border-b border-current pb-0.5 hover:text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)] transition-colors"
+          >
+            Watch on YouTube
+          </a>
+        </p>
+      </section>
 
-      <p
-        data-phase="live"
-        class="mx-auto mt-10 sm:mt-12 max-w-md text-base sm:text-lg leading-relaxed text-[color:var(--color-ink-soft)]"
-      >
-        Wherever you are, we would love for you to celebrate with us — join us
-        live as Abbie and Axel are married.
-      </p>
+      <section class="mt-16 sm:mt-24" aria-labelledby="photos-heading">
+        <h2
+          id="photos-heading"
+          class="mb-6 sm:mb-8 text-center text-xs sm:text-sm text-[color:var(--color-ink-soft)] tracking-[0.25em] uppercase"
+        >
+          Photos
+        </h2>
+        <ul class="gallery grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-43_pqscrz" data-photo="ALV-43_pqscrz" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-43_pqscrz"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-43_pqscrz 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-43_pqscrz 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-43_pqscrz 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie and Axel cheek to cheek in the garden, holding hands"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-51_x8sxym" data-photo="ALV-51_x8sxym" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-51_x8sxym"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-51_x8sxym 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-51_x8sxym 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-51_x8sxym 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie in her gown and veil beneath a wooden pergola"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-69_iekxpu" data-photo="ALV-69_iekxpu" data-width="2667" data-height="4000">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-69_iekxpu"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-69_iekxpu 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-69_iekxpu 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-69_iekxpu 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Axel leaning in close as Abbie smiles"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-80_hu3zyj" data-photo="ALV-80_hu3zyj" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-80_hu3zyj"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-80_hu3zyj 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-80_hu3zyj 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-80_hu3zyj 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie and Axel with family in front of a tall hedge"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-102_oqoyvk" data-photo="ALV-102_oqoyvk" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-102_oqoyvk"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-102_oqoyvk 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-102_oqoyvk 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-102_oqoyvk 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie and Axel with the bridesmaids in green, the flower girl, and the ring bearer"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-114_cebzul" data-photo="ALV-114_cebzul" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-114_cebzul"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-114_cebzul 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-114_cebzul 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-114_cebzul 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie sharing a smile with her father in the garden"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-125_ihb9r1" data-photo="ALV-125_ihb9r1" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-125_ihb9r1"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-125_ihb9r1 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-125_ihb9r1 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-125_ihb9r1 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie cheek to cheek with her mother, Kelsie, holding her bouquet"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-170_pprqia" data-photo="ALV-170_pprqia" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-170_pprqia"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-170_pprqia 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-170_pprqia 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-170_pprqia 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie walking down the aisle on her father's arm as guests stand"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-184_qvlqjo" data-photo="ALV-184_qvlqjo" data-width="4000" data-height="2666">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-184_qvlqjo"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-184_qvlqjo 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-184_qvlqjo 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-184_qvlqjo 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie and Axel holding hands at the altar before the officiant"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-192_yilz5t" data-photo="ALV-192_yilz5t" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-192_yilz5t"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-192_yilz5t 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-192_yilz5t 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-192_yilz5t 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie speaking her vows into a microphone as Axel and the officiant look on"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-208_umllou" data-photo="ALV-208_umllou" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-208_umllou"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-208_umllou 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-208_umllou 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-208_umllou 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Guests applauding Abbie and Axel at the altar"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-248_agibpp" data-photo="ALV-248_agibpp" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-248_agibpp"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-248_agibpp 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-248_agibpp 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-248_agibpp 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Axel smiling at Abbie as they arrive at the reception"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-250_lwvmkn" data-photo="ALV-250_lwvmkn" data-width="2667" data-height="4000">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-250_lwvmkn"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-250_lwvmkn 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-250_lwvmkn 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-250_lwvmkn 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie dancing with her father at the reception"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-253_uxcxhi" data-photo="ALV-253_uxcxhi" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-253_uxcxhi"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-253_uxcxhi 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-253_uxcxhi 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-253_uxcxhi 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie hugging her father at the reception as Axel sits nearby"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,w_2400,c_limit/abbie-axel/ALV-294_e3f6kw" data-photo="ALV-294_e3f6kw" data-width="4000" data-height="2667">
+              <img
+                src="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-294_e3f6kw"
+                srcset="https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_400/abbie-axel/ALV-294_e3f6kw 400w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_640/abbie-axel/ALV-294_e3f6kw 640w, https://res.cloudinary.com/dnkvsijzu/image/upload/f_auto,q_auto,c_fill,g_auto,ar_3:2,w_960/abbie-axel/ALV-294_e3f6kw 960w"
+                sizes="(min-width: 1072px) 330px, (min-width: 640px) 32vw, 48vw"
+                width="960" height="640" loading="lazy"
+                alt="Abbie and Axel kissing beside their wedding cake"
+              />
+            </a>
+          </li>
+        </ul>
+      </section>
 
-      <p
-        data-phase="recorded"
-        class="mx-auto mt-10 sm:mt-12 max-w-md text-base sm:text-lg leading-relaxed text-[color:var(--color-ink-soft)]"
-      >
-        Thank you for celebrating with us. The full ceremony is above, to watch
-        or revisit whenever you like.
-      </p>
-
-      <p
-        class="mt-10 text-xs sm:text-sm text-[color:var(--color-ink-soft)] tracking-[0.25em] uppercase"
+      <footer
+        class="mt-16 sm:mt-24 text-center text-xs sm:text-sm text-[color:var(--color-ink-soft)] tracking-[0.25em] uppercase"
       >
         <a
           href="https://ofreport.com/contact/"
@@ -176,7 +499,133 @@
         >
           Get in touch
         </a>
-      </p>
+      </footer>
     </main>
+
+    <dialog id="lightbox" aria-label="Photo viewer">
+      <div class="lb-stage"></div>
+      <p class="lb-count" aria-live="polite"></p>
+      <form method="dialog">
+        <button class="lb-button lb-close" aria-label="Close" autofocus>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </form>
+      <button type="button" class="lb-button lb-prev" aria-label="Previous photo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" />
+        </svg>
+      </button>
+      <button type="button" class="lb-button lb-next" aria-label="Next photo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </dialog>
+
+    <script>
+      // Progressive enhancement: every thumbnail is a plain link to the large
+      // image, so the gallery works without this script. With it, links open
+      // in the lightbox instead.
+      (() => {
+        const CLOUDINARY = "https://res.cloudinary.com/dnkvsijzu/image/upload";
+        const WIDTHS = [1200, 1800, 2400];
+        const links = [...document.querySelectorAll(".gallery a[data-photo]")];
+        const dialog = document.getElementById("lightbox");
+        const stage = dialog.querySelector(".lb-stage");
+        const count = dialog.querySelector(".lb-count");
+        let index = 0;
+
+        const url = (id, w) => `${CLOUDINARY}/f_auto,q_auto,w_${w},c_limit/abbie-axel/${id}`;
+
+        function buildImage(i) {
+          const link = links[i];
+          const id = link.dataset.photo;
+          const img = new Image();
+          img.width = link.dataset.width;
+          img.height = link.dataset.height;
+          img.sizes = "100vw";
+          img.srcset = WIDTHS.map((w) => `${url(id, w)} ${w}w`).join(", ");
+          img.src = url(id, 1800);
+          img.alt = link.querySelector("img").alt;
+          return img;
+        }
+
+        async function show(i) {
+          index = (i + links.length) % links.length;
+          const current = index;
+          const img = buildImage(current);
+          count.textContent = `${current + 1} of ${links.length}`;
+          // Swap only once decoded, so navigating never flashes a blank stage.
+          try {
+            await img.decode();
+          } catch {
+            // Decode can reject for reasons that still let the image render.
+          }
+          if (current !== index) return; // a newer navigation won the race
+          stage.replaceChildren(img);
+          // Warm the neighbours so prev/next feel instant.
+          buildImage((current + 1) % links.length);
+          buildImage((current - 1 + links.length) % links.length);
+        }
+
+        links.forEach((link, i) => {
+          link.addEventListener("click", (event) => {
+            // Leave modified clicks (new tab/window) to the browser.
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            show(i);
+            dialog.showModal();
+          });
+        });
+
+        dialog.querySelector(".lb-prev").addEventListener("click", () => show(index - 1));
+        dialog.querySelector(".lb-next").addEventListener("click", () => show(index + 1));
+
+        dialog.addEventListener("keydown", (event) => {
+          if (event.key === "ArrowLeft") show(index - 1);
+          else if (event.key === "ArrowRight") show(index + 1);
+        });
+
+        // Empty the stage on close so reopening on another photo never flashes
+        // the previous one while the new image decodes.
+        dialog.addEventListener("close", () => stage.replaceChildren());
+
+        // The dialog fills the viewport, so there is no visible backdrop to
+        // light-dismiss against; a click on the empty space around the photo
+        // closes it instead.
+        dialog.addEventListener("click", (event) => {
+          // A click right after a swipe is the swipe's own tail, not a dismissal.
+          // Time-boxed rather than a flag, since browsers often fire no click
+          // at all after a long touch move -- a flag would then eat the next tap.
+          if (performance.now() - lastSwipe < 400) return;
+          if (event.target === dialog || event.target === stage) dialog.close();
+        });
+
+        // Horizontal swipe on touch screens.
+        let startX = null;
+        let startY = null;
+        let lastSwipe = -Infinity;
+        stage.addEventListener("pointerdown", (event) => {
+          if (event.pointerType !== "touch") return;
+          startX = event.clientX;
+          startY = event.clientY;
+        });
+        stage.addEventListener("pointerup", (event) => {
+          if (startX === null) return;
+          const dx = event.clientX - startX;
+          const dy = event.clientY - startY;
+          startX = startY = null;
+          if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+            lastSwipe = performance.now();
+            show(index + (dx < 0 ? 1 : -1));
+          }
+        });
+        stage.addEventListener("pointercancel", () => {
+          startX = startY = null;
+        });
+      })();
+    </script>
   </body>
 </html>

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 GitHub Pages **user site** for Joshua Steele, served at https://joshukraine.com (custom domain via `CNAME`). Because this is a user site (`<user>.github.io`), GitHub Pages publishes from the `main` branch root automatically — no Actions workflow, no build step.
 
-This repo hosts the root homepage and one-off / temporary subdirectory pages (e.g., `/abbie-axel/`) — each a standalone static page.
+This repo hosts the root homepage and standalone subdirectory pages — some permanent (e.g., `/abbie-axel/`, a wedding memorial), some temporary.
 
 ## What lives elsewhere (and why it matters)
 
@@ -48,6 +48,8 @@ For simple static pages that don't warrant their own repo:
 Same idea for `--color-*` (→ `text-*`/`bg-*`) and other Tailwind theme namespaces. When you add a token under `@theme`, the matching utility is generated for free — don't reach for `[var(--…)]` arbitrary syntax.
 
 ## Images via Cloudinary
+
+Photos for `/abbie-axel/` live in the Cloudinary folder `abbie-axel/`. Cloudinary appends a random suffix to each public ID (`ALV-43_pqscrz`), so take IDs from the Media Library and `curl -I` them — never guess. Uploads over 10 MB / ~25 MP are rejected on this plan; downsize first (4000px long edge, q88) and keep the full-res originals.
 
 Prefer Cloudinary over committing image binaries — keeps the repo lean and gets you responsive format negotiation. Standard transform recipes:
 
