@@ -31,21 +31,15 @@ One page per subdirectory. Use the existing `abbie-axel/index.html` as a starter
 
 ## Stack for one-off pages
 
-For simple static pages that don't warrant their own repo:
+For simple static pages that don't warrant their own repo, use **plain CSS in a single `<style>` block** — no Tailwind, no framework, no build step. `abbie-axel/index.html` shows the pattern:
 
-- **Tailwind v4** via CDN: `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>`
-- Custom theme tokens go in `<style type="text/tailwindcss">` inside an `@theme { ... }` block
+- Design tokens (fonts, colors) as custom properties on `:root`
+- A minimal reset holding only the browser defaults the page would otherwise pick up (body/heading/list margins, list bullets, link color, button and iframe borders) — not a full preflight
+- Responsive breakpoints as plain media queries (`640px` small, `768px` medium)
 - **Google Fonts** for typography, loaded via `<link rel="stylesheet">` with `preconnect` hints to `fonts.googleapis.com` and `fonts.gstatic.com`
-- Skip Alpine.js and Tailwind Plus Elements unless the page has actual interactivity — they're dead weight on a static info page
+- No JavaScript libraries unless the page has actual interactivity; abbie-axel's lightbox is a native `<dialog>` with a small inline script
 
-### Tailwind v4 gotcha worth remembering
-
-`class="font-[var(--font-display)]"` does **not** generate a utility in Tailwind v4 — the arbitrary-value syntax with a CSS variable silently fails (no error, just falls back to the inherited font). The correct path:
-
-1. Declare the token inside `@theme`: `--font-display: "Cormorant Garamond", ui-serif, ...;`
-2. Use the auto-generated utility: `class="font-display"`
-
-Same idea for `--color-*` (→ `text-*`/`bg-*`) and other Tailwind theme namespaces. When you add a token under `@theme`, the matching utility is generated for free — don't reach for `[var(--…)]` arbitrary syntax.
+Why not the Tailwind CDN: its browser build compiles on every visit (Tailwind's docs call it a prototyping tool, not for production), which slows load and can flash unstyled content. Its `@4` URL is also unpinned, so an upstream release can change the live site with no commit here.
 
 ## Images via Cloudinary
 
