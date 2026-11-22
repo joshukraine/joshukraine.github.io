@@ -34,7 +34,7 @@ One page per subdirectory. Use the existing `abbie-axel/index.html` as a starter
 For simple static pages that don't warrant their own repo, use **plain CSS in a single `<style>` block** — no Tailwind, no framework, no build step. `abbie-axel/index.html` shows the pattern:
 
 - Design tokens (fonts, colors) as custom properties on `:root`
-- A minimal reset holding only the browser defaults the page would otherwise pick up (body/heading/list margins, list bullets, link color, button and iframe borders) — not a full preflight
+- A minimal reset holding only the browser defaults the page would otherwise pick up (body, heading, paragraph and list margins; list bullets; link color; button and iframe borders; block-level, fluid images) — not a full preflight
 - Responsive breakpoints as plain media queries (`640px` small, `768px` medium)
 - **Google Fonts** for typography, loaded via `<link rel="stylesheet">` with `preconnect` hints to `fonts.googleapis.com` and `fonts.gstatic.com`
 - No JavaScript libraries unless the page has actual interactivity; abbie-axel's lightbox is a native `<dialog>` with a small inline script

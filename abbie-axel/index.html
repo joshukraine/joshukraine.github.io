@@ -79,7 +79,6 @@
         margin: 0;
       }
       h2 {
-        font-size: inherit;
         font-weight: inherit;
       }
       ul {
@@ -95,13 +94,23 @@
         border: 0;
         font: inherit;
       }
+      img,
+      iframe {
+        display: block;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+      iframe {
+        border: 0;
+      }
 
       /* Layout. Breakpoints: 640px (small) and 768px (medium). */
       body {
         padding: 3.5rem 1.5rem;
       }
       main {
-        width: 100%;
         max-width: 64rem;
         margin-inline: auto;
       }
@@ -116,10 +125,8 @@
 
       /* Header */
       .cover {
-        display: block;
         width: 100%;
         max-width: 48rem;
-        height: auto;
         margin: 0 auto 2.5rem;
         border-radius: 0.75rem;
       }
@@ -146,16 +153,13 @@
         color: var(--color-ink-soft);
       }
       .divider-rule {
-        display: inline-block;
         width: 2.5rem;
         height: 1px;
         background-color: var(--color-ink-quiet);
-        vertical-align: middle;
       }
       .intro {
         max-width: 28rem;
         margin: 2rem auto 0;
-        font-size: 1rem;
         line-height: 1.625;
         color: var(--color-ink-soft);
       }
@@ -182,53 +186,48 @@
       }
 
       /* Sections */
-      .label {
+      .label,
+      .video-help {
         font-size: 0.75rem;
         line-height: calc(1 / 0.75);
+        text-align: center;
+      }
+      .label {
         letter-spacing: 0.25em;
         text-transform: uppercase;
-        text-align: center;
         color: var(--color-ink-soft);
       }
       .ceremony {
         max-width: 48rem;
         margin: 3.5rem auto 0;
       }
-      .ceremony h2 {
+      section h2 {
         margin-bottom: 1.5rem;
       }
       .video {
         aspect-ratio: 16 / 9;
-        width: 100%;
         overflow: hidden;
         border-radius: 0.75rem;
         background-color: rgb(0 0 0 / 0.05);
       }
       .video iframe {
-        display: block;
         width: 100%;
         height: 100%;
-        border: 0;
       }
       .video-help {
         margin-top: 1rem;
-        font-size: 0.75rem;
-        line-height: calc(1 / 0.75);
-        text-align: center;
         color: var(--color-ink-quiet);
       }
       .photos,
       footer {
         margin-top: 4rem;
       }
-      .photos h2 {
-        margin-bottom: 1.5rem;
-      }
       .text-link {
         padding-bottom: 0.125rem;
         border-bottom: 1px solid currentColor;
-        transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-          border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        transition-property: color, border-color;
+        transition-duration: 0.15s;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       }
       @media (hover: hover) {
         .text-link:hover {
@@ -272,13 +271,11 @@
         background-color: rgb(0 0 0 / 0.05);
       }
       .gallery a:focus-visible {
-        outline: 2px solid #2a2a2a;
+        outline: 2px solid var(--color-ink);
         outline-offset: 3px;
       }
       .gallery img {
-        display: block;
         width: 100%;
-        height: auto;
         aspect-ratio: 3 / 2;
         object-fit: cover;
       }
@@ -349,10 +346,8 @@
       .lb-stage img {
         /* Explicit viewport math: a percentage max-height does not resolve
            against an auto-height grid row. 7rem/8rem = the stage padding. */
-        max-width: 100%;
         max-height: calc(100dvh - 7rem);
         width: auto;
-        height: auto;
         object-fit: contain;
         user-select: none;
         -webkit-user-drag: none;
