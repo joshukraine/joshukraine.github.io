@@ -19,7 +19,7 @@ Short URLs at `jsua.co/<slug>` that forward here are managed in [joshukraine/jsu
 2. Push to `main` — the page is live at `joshukraine.com/event-name/` within ~1 minute
 3. If you want a short URL, add an entry to `redirects.yaml` in `jsua-redirects`
 
-`abbie-axel/index.html` is a reasonable starting template for one-off info pages: Tailwind v4 + Google Fonts via CDN, Cloudinary for images, OG and Twitter meta tags, and a dependency-free `<dialog>` lightbox if the page needs a gallery.
+`abbie-axel/index.html` is a reasonable starting template for one-off info pages: plain CSS in one `<style>` block (no framework, no build), Google Fonts, Cloudinary for images, OG and Twitter meta tags, and a dependency-free `<dialog>` lightbox if the page needs a gallery.
 
 ## How to retire a temporary page
 
